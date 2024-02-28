@@ -48,7 +48,23 @@ tester.run('unit-naming-rule', unitNamingRule, {
     {
       code: `${ImportAtom}; const some = atom(0, 'SomeDomain._unrelated')`,
       errors: [{ messageId: 'nameIncorrect' }],
-      output: `${ImportAtom}; const some = atom(0, 'SomeDomain._some')`,
+      output: `${ImportAtom}; function reatomSome() { const field = atom(0, 'reatomSome.field') }`,
+    },
+    {
+      code: `${ImportAtom}; function reatomSome() { const field = atom(0, 'Some.field') }`,
+      errors: [{ messageId: 'nameIncorrect' }],
+      output: `${ImportAtom}; function reatomSome() { const field = atom(0, 'reatomSome.field') }`,
+    },
+    {
+      code: `${ImportAtom}; function reatomSome({name}) { const field = atom(0, 'field'); }`,
+      options:
+      errors: [{ messageId: 'nameIncorrect' }],
+      output: `${ImportAtom}; function reatomSome({name}) { const field = atom(0, \`\${name}.field\`); }`,
+    },
+    {
+      code: `${ImportAtom}; function reatomSome({name}) { const field = atom(0, 'Some.field'); }`,
+      errors: [{ messageId: 'nameIncorrect' }],
+      output: `${ImportAtom}; function reatomSome({name}) { const field = atom(0, \`\${name}.field\`); }`,
     },
   ],
 })
